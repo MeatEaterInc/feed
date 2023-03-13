@@ -1,6 +1,6 @@
 import * as convert from "xml-js";
 import { generator } from "./config";
-import { Feed } from "./feed";
+import  {Extension, Feed } from "./feed";
 import { Author, Category, Enclosure, Item } from "./typings";
 import { sanitize } from "./utils";
 
@@ -116,7 +116,7 @@ export default (ins: Feed) => {
   base.rss.channel.item = [];
 
   ins.items.map((entry: Item) => {
-    let item: any = {};
+    const item: any = {};
 
     if (entry.title) {
       item.title = { _cdata: entry.title };
@@ -191,6 +191,15 @@ export default (ins: Feed) => {
 
     if (entry.video) {
       item.enclosure = formatEnclosure(entry.video, "video");
+    }
+
+    /**
+     * Item Extensions
+     */
+    if (entry.extensions) {
+      entry.extensions.map((e: Extension) => {
+        item[e.name] = e.objects;
+      });
     }
 
     base.rss.channel.item.push(item);
